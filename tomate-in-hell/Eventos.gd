@@ -1,0 +1,16 @@
+extends Node
+
+signal enemigo_muerto(posicion: Vector2, valor_esencia: int, valor_monedas: int, es_boss: bool)
+signal jugador_daniado(hp_actual: float, hp_maximo: float)
+signal jugador_curado(hp_actual: float, hp_maximo: float)
+signal jugador_murio()
+signal esencia_actualizada(xp_actual: int, xp_requerida: int, nivel: int)
+signal monedas_actualizadas(total_monedas: int)
+signal oleada_iniciada(numero_oleada: int, duracion: float)
+signal tiempo_oleada_actualizado(tiempo_restante: float)
+signal oleada_terminada()
+signal abrir_subida_nivel(niveles_pendientes: int)
+signal mejora_seleccionada(mejora: Dictionary)
+signal abrir_tienda()
+signal cerrar_tienda()
+signal arma_comprada(datos_arma: Dictionary)
