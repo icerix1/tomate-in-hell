@@ -1,6 +1,7 @@
 class_name DatosJuego
 
-# Fórmulas de escalado infinito
+static var personaje_actual: Dictionary = {}
+
 static func calcular_vida_enemigo(hp_base: float, oleada: int) -> float:
 	var mult: float = 1.0 + (0.10 * oleada) + (0.0025 * pow(oleada, 2))
 	return hp_base * mult
@@ -72,6 +73,217 @@ const CATALOGO_ARMAS: Dictionary = {
 		"mult_critico": 1.5,
 		"penetracion": 0,
 		"precio": 50
+	}
+}
+
+const CATALOGO_PERSONAJES: Dictionary = {
+	"clasico": {
+		"nombre": "Tomate Clásico",
+		"hp": 100.0,
+		"arma": "pistola",
+		"desc": "+5% a todas las estadísticas",
+		"danio_mult": 1.05,
+		"velocidad_mult": 1.05,
+		"cadencia_mult": 1.05,
+		"armadura": 0.0,
+		"critico_extra": 0.0,
+		"robo_vida": 0.0,
+		"esquiva": 0.0
+	},
+	"comando": {
+		"nombre": "Comando",
+		"hp": 100.0,
+		"arma": "subfusil",
+		"desc": "+20% daño y +15% cadencia",
+		"danio_mult": 1.20,
+		"velocidad_mult": 1.0,
+		"cadencia_mult": 1.15,
+		"armadura": 0.0,
+		"critico_extra": 0.0,
+		"robo_vida": 0.0,
+		"esquiva": 0.0
+	},
+	"vaquero": {
+		"nombre": "Vaquero",
+		"hp": 80.0,
+		"arma": "revolver",
+		"desc": "+20% probabilidad crítica",
+		"danio_mult": 1.0,
+		"velocidad_mult": 1.0,
+		"cadencia_mult": 1.0,
+		"armadura": 0.0,
+		"critico_extra": 0.20,
+		"robo_vida": 0.0,
+		"esquiva": 0.0
+	},
+	"brujo": {
+		"nombre": "Brujo",
+		"hp": 90.0,
+		"arma": "pistola",
+		"desc": "+30% daño base",
+		"danio_mult": 1.30,
+		"velocidad_mult": 1.0,
+		"cadencia_mult": 1.0,
+		"armadura": 0.0,
+		"critico_extra": 0.0,
+		"robo_vida": 0.0,
+		"esquiva": 0.0
+	},
+	"tanque": {
+		"nombre": "Tanque",
+		"hp": 160.0,
+		"arma": "escopeta",
+		"desc": "+5 armadura, -20% velocidad",
+		"danio_mult": 1.0,
+		"velocidad_mult": 0.80,
+		"cadencia_mult": 1.0,
+		"armadura": 5.0,
+		"critico_extra": 0.0,
+		"robo_vida": 0.0,
+		"esquiva": 0.0
+	},
+	"artillero": {
+		"nombre": "Artillero",
+		"hp": 110.0,
+		"arma": "escopeta",
+		"desc": "+35% daño, -15% cadencia",
+		"danio_mult": 1.35,
+		"velocidad_mult": 1.0,
+		"cadencia_mult": 0.85,
+		"armadura": 0.0,
+		"critico_extra": 0.0,
+		"robo_vida": 0.0,
+		"esquiva": 0.0
+	},
+	"ninja": {
+		"nombre": "Ninja",
+		"hp": 70.0,
+		"arma": "pistola",
+		"desc": "+20% velocidad, +15% esquiva",
+		"danio_mult": 1.0,
+		"velocidad_mult": 1.20,
+		"cadencia_mult": 1.0,
+		"armadura": 0.0,
+		"critico_extra": 0.0,
+		"robo_vida": 0.0,
+		"esquiva": 0.15
+	},
+	"vampiro": {
+		"nombre": "Vampiro",
+		"hp": 100.0,
+		"arma": "subfusil",
+		"desc": "+5% robo de vida al impactar",
+		"danio_mult": 1.0,
+		"velocidad_mult": 1.0,
+		"cadencia_mult": 1.0,
+		"armadura": 0.0,
+		"critico_extra": 0.0,
+		"robo_vida": 0.05,
+		"esquiva": 0.0
+	},
+	"electrico": {
+		"nombre": "Eléctrico",
+		"hp": 95.0,
+		"arma": "subfusil",
+		"desc": "+20% cadencia de disparo",
+		"danio_mult": 0.90,
+		"velocidad_mult": 1.0,
+		"cadencia_mult": 1.20,
+		"armadura": 0.0,
+		"critico_extra": 0.0,
+		"robo_vida": 0.0,
+		"esquiva": 0.0
+	},
+	"piromano": {
+		"nombre": "Pirómano",
+		"hp": 100.0,
+		"arma": "escopeta",
+		"desc": "+15% daño explosivo e impacto",
+		"danio_mult": 1.15,
+		"velocidad_mult": 1.0,
+		"cadencia_mult": 1.0,
+		"armadura": 0.0,
+		"critico_extra": 0.0,
+		"robo_vida": 0.0,
+		"esquiva": 0.0
+	},
+	"toxico": {
+		"nombre": "Tóxico",
+		"hp": 110.0,
+		"arma": "pistola",
+		"desc": "+10 HP extra, -10% velocidad",
+		"danio_mult": 1.0,
+		"velocidad_mult": 0.90,
+		"cadencia_mult": 1.0,
+		"armadura": 2.0,
+		"critico_extra": 0.0,
+		"robo_vida": 0.0,
+		"esquiva": 0.0
+	},
+	"codicioso": {
+		"nombre": "Codicioso",
+		"hp": 100.0,
+		"arma": "pistola",
+		"desc": "-15% daño, mayor economía",
+		"danio_mult": 0.85,
+		"velocidad_mult": 1.05,
+		"cadencia_mult": 1.0,
+		"armadura": 0.0,
+		"critico_extra": 0.0,
+		"robo_vida": 0.0,
+		"esquiva": 0.0
+	},
+	"francotirador": {
+		"nombre": "Francotirador",
+		"hp": 80.0,
+		"arma": "revolver",
+		"desc": "+30% crítico, -25% cadencia",
+		"danio_mult": 1.15,
+		"velocidad_mult": 1.0,
+		"cadencia_mult": 0.75,
+		"armadura": 0.0,
+		"critico_extra": 0.30,
+		"robo_vida": 0.0,
+		"esquiva": 0.0
+	},
+	"berserker": {
+		"nombre": "Berserker",
+		"hp": 125.0,
+		"arma": "escopeta",
+		"desc": "+25 HP inicial, alta agresión",
+		"danio_mult": 1.10,
+		"velocidad_mult": 1.05,
+		"cadencia_mult": 1.0,
+		"armadura": 0.0,
+		"critico_extra": 0.05,
+		"robo_vida": 0.0,
+		"esquiva": 0.0
+	},
+	"invocador": {
+		"nombre": "Invocador",
+		"hp": 85.0,
+		"arma": "subfusil",
+		"desc": "+30% radio de recogida",
+		"danio_mult": 0.95,
+		"velocidad_mult": 1.0,
+		"cadencia_mult": 1.0,
+		"armadura": 0.0,
+		"critico_extra": 0.0,
+		"robo_vida": 0.0,
+		"esquiva": 0.0
+	},
+	"caotico": {
+		"nombre": "Caótico",
+		"hp": 100.0,
+		"arma": "revolver",
+		"desc": "Estadísticas impredecibles",
+		"danio_mult": 1.10,
+		"velocidad_mult": 1.10,
+		"cadencia_mult": 0.90,
+		"armadura": 1.0,
+		"critico_extra": 0.10,
+		"robo_vida": 0.02,
+		"esquiva": 0.05
 	}
 }
 

@@ -30,7 +30,6 @@ var ranuras_armas: Array[Node2D] = []
 var max_armas: int = 6
 var radio_recogida_base: float = 120.0
 
-# Disparo secuencial (una por una)
 var cooldown_entre_armas: float = 0.12
 var timer_entre_armas: float = 0.0
 var indice_arma_actual: int = 0
@@ -39,6 +38,8 @@ func _ready() -> void:
 	add_to_group("jugador")
 	collision_layer = 2
 	collision_mask = 1
+	
+	cargar_datos_personaje()
 	
 	var col := CollisionShape2D.new()
 	var forma := CircleShape2D.new()
@@ -52,20 +53,36 @@ func _ready() -> void:
 	area_iman.collision_mask = 32
 	var col_iman := CollisionShape2D.new()
 	var circ_iman := CircleShape2D.new()
-	circ_iman.radius = radio_recogida_base
+	circ_iman.radius = radio_recogida_base * recogida_mult
 	col_iman.shape = circ_iman
 	area_iman.add_child(col_iman)
 	add_child(area_iman)
+
+func cargar_datos_personaje() -> void:
+	var datos: Dictionary = DatosJuego.personaje_actual
+	if datos.is_empty():
+		datos = DatosJuego.CATALOGO_PERSONAJES["clasico"]
+		
+	vida_maxima = datos.get("hp", 100.0)
+	vida_actual = vida_maxima
+	danio_mult = datos.get("danio_mult", 1.0)
+	velocidad_mult = datos.get("velocidad_mult", 1.0)
+	cadencia_mult = datos.get("cadencia_mult", 1.0)
+	armadura = datos.get("armadura", 0.0)
+	critico_extra = datos.get("critico_extra", 0.0)
+	robo_vida = datos.get("robo_vida", 0.0)
+	esquiva = datos.get("esquiva", 0.0)
 	
-	equipar_arma_inicial("pistola")
+	var arma_inicial: String = datos.get("arma", "pistola")
+	equipar_arma_inicial(arma_inicial)
 
 func equipar_arma_inicial(clave: String) -> void:
 	if ranuras_armas.size() < max_armas:
-		var datos: Dictionary = DatosJuego.CATALOGO_ARMAS.get(clave, DatosJuego.CATALOGO_ARMAS["pistola"])
+		var datos_arma: Dictionary = DatosJuego.CATALOGO_ARMAS.get(clave, DatosJuego.CATALOGO_ARMAS["pistola"])
 		var arma := Node2D.new()
 		arma.set_script(SCRIPT_ARMA)
 		add_child(arma)
-		arma.configurar(datos, 1)
+		arma.configurar(datos_arma, 1)
 		ranuras_armas.append(arma)
 		reorganizar_armas()
 
