@@ -34,6 +34,10 @@ var cooldown_entre_armas: float = 0.12
 var timer_entre_armas: float = 0.0
 var indice_arma_actual: int = 0
 
+var Animatedsprite := AnimatedSprite2D.new()
+var particles := GPUParticles3D.new()
+var direction :=0;
+
 func _ready() -> void:
 	add_to_group("jugador")
 	collision_layer = 2
@@ -57,6 +61,38 @@ func _ready() -> void:
 	col_iman.shape = circ_iman
 	area_iman.add_child(col_iman)
 	add_child(area_iman)
+
+	Animatedsprite.name = "PlayerSprite"
+	Animatedsprite.sprite_frames = load("res://Animations/BasicTomatto.tres")
+	Animatedsprite.scale = Vector2(0.05, 0.05)
+	add_child(Animatedsprite)
+	Animatedsprite.play("IdleRight")
+
+	# particles.name = "Particles"
+	# # Basic particle settings
+	# particles.amount = 100
+	# particles.lifetime = 1.0
+	# particles.emitting = true
+
+    # # Create the particle behavior/material
+	# var particle_material := ParticleProcessMaterial.new()
+
+	# particle_material.direction = Vector3(0, 1, 0)
+	# particle_material.spread = 30.0
+	# particle_material.initial_velocity_min = 2.0
+	# particle_material.initial_velocity_max = 4.0
+	# particle_material.gravity = Vector3(0, -1, 0)
+
+	# particles.process_material = particle_material
+
+    # # Create the mesh that each particle displays
+	# var particle_mesh := QuadMesh.new()
+	# particle_mesh.size = Vector2(0.1, 0.1)
+
+	# particles.draw_pass_1 = particle_mesh
+
+    # # Add GPUParticles3D to this node
+	# add_child(particles)
 
 func cargar_datos_personaje() -> void:
 	var datos: Dictionary = DatosJuego.personaje_actual
@@ -137,12 +173,32 @@ func _physics_process(delta: float) -> void:
 	var entrada := Vector2.ZERO
 	if Input.is_key_pressed(KEY_W) or Input.is_key_pressed(KEY_UP):
 		entrada.y -= 1.0
+		direction =1
 	if Input.is_key_pressed(KEY_S) or Input.is_key_pressed(KEY_DOWN):
 		entrada.y += 1.0
+		direction =2
 	if Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT):
 		entrada.x -= 1.0
+		direction =3
 	if Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_RIGHT):
 		entrada.x += 1.0
+		direction =4
+
+	if entrada.x > 0:
+		Animatedsprite.play("WalkingRight")
+	elif entrada.x < 0:
+		Animatedsprite.play("WalkingLeft")
+	elif entrada.y < 0:
+		pass
+	elif entrada.y > 0:
+		pass
+
+	if abs(entrada.x)<=0 and abs(entrada.y)<=0:
+		match direction:
+			1:pass
+			2:pass
+			3:Animatedsprite.play("IdleLeft")
+			4:Animatedsprite.play("IdleRight")
 		
 	entrada = entrada.normalized()
 	velocity = entrada * (velocidad_base * velocidad_mult)
@@ -214,14 +270,3 @@ func aplicar_mejora(mejora: Dictionary) -> void:
 				var col = area.get_child(0) as CollisionShape2D
 				if col and col.shape is CircleShape2D:
 					col.shape.radius = radio_recogida_base * recogida_mult
-
-func _draw() -> void:
-	var a: float = 0.4 if parpadeo_vis else 1.0
-	draw_circle(Vector2.ZERO, 18.0, Color(0.92, 0.2, 0.15, a))
-	draw_circle(Vector2(-3, -3), 13.0, Color(1.0, 0.35, 0.25, a))
-	var hojas := PackedVector2Array([Vector2(0, -18), Vector2(-7, -26), Vector2(0, -22), Vector2(7, -26)])
-	draw_colored_polygon(hojas, Color(0.2, 0.8, 0.25, a))
-	draw_circle(Vector2(-5, -2), 4.0, Color(1, 1, 1, a))
-	draw_circle(Vector2(5, -2), 4.0, Color(1, 1, 1, a))
-	draw_circle(Vector2(-4, -2), 2.0, Color(0, 0, 0, a))
-	draw_circle(Vector2(6, -2), 2.0, Color(0, 0, 0, a))
